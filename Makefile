@@ -1,0 +1,20 @@
+.PHONY: clean deps test
+
+clean:
+	rm -rf .Build/
+
+deps:
+	mkdir -p .Build/logs/coverage/
+	composer install
+
+update:
+	composer update -W
+
+test:
+	XDEBUG_MODE=coverage,debug .Build/bin/phpunit -c phpunit.xml
+	XDEBUG_MODE=coverage,debug .Build/bin/phpunit -c phpunit_functional.xml
+	# merge and generate clover and html report
+	XDEBUG_MODE=coverage .Build/bin/phpunit-merger coverage .Build/logs/coverage/ --html=.Build/logs/html/ .Build/logs/clover.xml
+	# merge into php coverage
+	.Build/bin/phpcov merge --php .Build/logs/coverage.php .Build/logs/coverage/
+	.Build/bin/phpunit-merger log .Build/logs/junit/ .Build/logs/junit.xml

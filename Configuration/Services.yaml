@@ -1,0 +1,38 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+  Netlogix\Nxsimplecdn\:
+    resource: '../Classes/*'
+  Netlogix\Nxsimplecdn\EventListener\AddCdnToResource:
+    tags:
+      - name: event.listener
+        identifier: 'generatePublicUrlForResourceListener'
+        event: TYPO3\CMS\Core\Resource\Event\GeneratePublicUrlForResourceEvent
+  Netlogix\Nxsimplecdn\EventListener\FlushCacheTagForFile:
+    tags:
+      - name: evnet.listener
+        identifier: 'flushCacheAfterFileContentsSet'
+        method: 'afterFileContentsSet'
+        event: TYPO3\CMS\Core\Resource\Event\AfterFileContentsSetEvent
+
+      - name: evnet.listener
+        identifier: 'flushCacheAfterFileDeleted'
+        method: 'afterFileDeleted'
+        event: TYPO3\CMS\Core\Resource\Event\AfterFileDeletedEvent
+
+      - name: evnet.listener
+        identifier: 'flushCacheAfterFileMoved'
+        method: 'afterFileMoved'
+        event: TYPO3\CMS\Core\Resource\Event\AfterFileMovedEvent
+
+      - name: evnet.listener
+        identifier: 'flushCacheAfterFileRenamed'
+        method: 'afterFileRenamed'
+        event: TYPO3\CMS\Core\Resource\Event\AfterFileRenamedEvent
+
+      - name: evnet.listener
+        identifier: 'flushCacheAfterFileReplaced'
+        method: 'afterFileReplaced'
+        event: TYPO3\CMS\Core\Resource\Event\AfterFileReplacedEvent
