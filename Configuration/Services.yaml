@@ -45,3 +45,7 @@ services:
       - name: event.listener
         identifier: 'nxsimplecdn/addFileCacheTagForTypolink'
         event: TYPO3\CMS\Frontend\Event\AfterLinkIsGeneratedEvent
+
+  Netlogix\Nxsimplecdn\Xclass\PageRenderer:
+    arguments:
+      $assetsCache: '@cache.assets'

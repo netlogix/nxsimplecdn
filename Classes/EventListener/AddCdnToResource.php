@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Netlogix\Nxsimplecdn\EventListener;
 
-use InvalidArgumentException;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\UriInterface;
+use Netlogix\Nxsimplecdn\Service\BaseUriService;
 use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
@@ -16,7 +14,6 @@ use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
 use TYPO3\CMS\Core\Resource\ResourceInterface;
 use TYPO3\CMS\Core\Resource\ResourceStorageInterface;
-use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class AddCdnToResource
@@ -47,30 +44,12 @@ class AddCdnToResource
     private function addCdnPrefixToUrl(ResourceInterface $resourceObject, DriverInterface $driver): string
     {
         $publicUrl = $driver->getPublicUrl($resourceObject->getIdentifier());
-        $cdnBaseUrl = $this->getCdnBase();
+        $cdnBaseUrl = GeneralUtility::makeInstance(BaseUriService::class)->getBaseUri();
         if (!$resourceObject instanceof ProcessedFile) {
             $publicUrl = GeneralUtility::createVersionNumberedFilename($publicUrl);
         }
 
         return (string) (new Uri($publicUrl))->withScheme('https')
             ->withHost($cdnBaseUrl->getHost());
-    }
-
-    private function getCdnBase(): UriInterface
-    {
-        $request = $this->getRequest();
-        $site = $request->getAttribute('site');
-        assert($site instanceof Site);
-
-        try {
-            return new Uri($site->getAttribute('cdnBase'));
-        } catch (InvalidArgumentException) {
-            return $site->getBase();
-        }
-    }
-
-    private function getRequest(): ServerRequestInterface
-    {
-        return $GLOBALS['TYPO3_REQUEST'];
     }
 }

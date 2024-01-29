@@ -24,7 +24,9 @@ class AddFileCacheTagForTypolink
 
         $linkService = GeneralUtility::makeInstance(LinkService::class);
         $resolvedLink = $linkService->resolveByStringRepresentation(
-            $event->getContentObjectRenderer()->parameters['href']
+            $event
+                ->getContentObjectRenderer()
+                ->parameters['href']
         );
 
         if (!array_key_exists('file', $resolvedLink)) {
@@ -35,7 +37,7 @@ class AddFileCacheTagForTypolink
         $file = $resolvedLink['file'];
 
         $this->getTypoScriptFrontendController()
-            ->addCacheTags(['sys_file_' . (int)$file->getProperty('uid')]);
+            ->addCacheTags(['sys_file_' . (int) $file->getProperty('uid')]);
     }
 
     private function getTypoScriptFrontendController(): TypoScriptFrontendController
