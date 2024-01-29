@@ -1,8 +1,12 @@
 <?php
-defined('TYPO3_MODE') or die();
 
-(function () {
-    if (TYPO3_MODE == 'FE') {
-        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_content.php']['typoLink_PostProc']['tx_nxsimplecdn'] = \Netlogix\Nxsimplecdn\SignalSlot\ResourceStorage::class . '->addFileCacheTagForTypolink';
-    }
+declare(strict_types=1);
+
+use Netlogix\Nxsimplecdn\Xclass\PageRenderer;
+
+defined('TYPO3') || die();
+
+(static function (): void {
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][TYPO3\CMS\Core\Page\PageRenderer::class]['className'] =
+        PageRenderer::class;
 })();

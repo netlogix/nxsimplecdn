@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Netlogix\Nxsimplecdn\EventListener;
@@ -14,7 +15,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class FlushCacheTagForFile
 {
-
     public function afterFileMoved(AfterFileMovedEvent $event): void
     {
         $this->flushCacheByFile($event->getFile());
@@ -40,10 +40,9 @@ class FlushCacheTagForFile
         $this->flushCacheByFile($event->getFile());
     }
 
-    private function flushCacheByFile(FileInterface $file)
+    private function flushCacheByFile(FileInterface $file): void
     {
         $cacheManager = GeneralUtility::makeInstance(CacheManager::class);
         $cacheManager->flushCachesByTag('sys_file_' . (int) $file->getProperty('uid'));
     }
-
 }
