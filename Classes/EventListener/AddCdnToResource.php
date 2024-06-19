@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Netlogix\Nxsimplecdn\EventListener;
 
 use Netlogix\Nxsimplecdn\Service\BaseUriService;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
@@ -18,8 +19,25 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class AddCdnToResource
 {
+    protected $configuration = [];
+
+    public function __construct(
+        ExtensionConfiguration $extensionConfiguration = null
+    ) {
+        $this->configuration = $extensionConfiguration ? $extensionConfiguration->get('nxsimplecdn') :
+            GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('nxsimplecdn');
+    }
+
     public function __invoke(GeneratePublicUrlForResourceEvent $event): void
     {
+        if ((bool)$this->configuration['enabled'] === false) {
+            return;
+        }
+
+        if ($event->getPublicUrl() !== null) {
+            return;
+        }
+
         $driver = $event->getDriver();
         $resource = $event->getResource();
         if (
