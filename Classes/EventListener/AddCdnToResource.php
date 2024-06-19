@@ -21,16 +21,17 @@ class AddCdnToResource
 {
     protected $configuration = [];
 
-    public function __construct(
-        ExtensionConfiguration $extensionConfiguration = null
-    ) {
-        $this->configuration = $extensionConfiguration ? $extensionConfiguration->get('nxsimplecdn') :
+    public function __construct(ExtensionConfiguration $extensionConfiguration = null)
+    {
+        $this->configuration = $extensionConfiguration instanceof ExtensionConfiguration ? $extensionConfiguration->get(
+            'nxsimplecdn'
+        ) :
             GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('nxsimplecdn');
     }
 
     public function __invoke(GeneratePublicUrlForResourceEvent $event): void
     {
-        if ((bool)$this->configuration['enabled'] === false) {
+        if (!(bool) $this->configuration['enabled']) {
             return;
         }
 
