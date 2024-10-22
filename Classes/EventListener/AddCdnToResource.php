@@ -12,6 +12,7 @@ use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\Driver\LocalDriver;
 use TYPO3\CMS\Core\Resource\Event\GeneratePublicUrlForResourceEvent;
 use TYPO3\CMS\Core\Resource\File;
+use TYPO3\CMS\Core\Resource\OnlineMedia\Helpers\OnlineMediaHelperRegistry;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
 use TYPO3\CMS\Core\Resource\ResourceInterface;
 use TYPO3\CMS\Core\Resource\ResourceStorageInterface;
@@ -53,8 +54,17 @@ class AddCdnToResource
             return;
         }
 
-        if (($resource->getStorage()->getCapabilities(
-        ) & ResourceStorageInterface::CAPABILITY_PUBLIC) !== ResourceStorageInterface::CAPABILITY_PUBLIC) {
+        if (
+            ($resource->getStorage()->getCapabilities() & ResourceStorageInterface::CAPABILITY_PUBLIC)
+                !== ResourceStorageInterface::CAPABILITY_PUBLIC
+        ) {
+            return;
+        }
+
+        if (
+            $resource instanceof File &&
+            GeneralUtility::makeInstance(OnlineMediaHelperRegistry::class)->getOnlineMediaHelper($resource) !== false
+        ) {
             return;
         }
 
