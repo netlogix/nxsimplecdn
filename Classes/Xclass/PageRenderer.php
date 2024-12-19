@@ -18,11 +18,8 @@ class PageRenderer extends \TYPO3\CMS\Core\Page\PageRenderer
             return $file;
         }
 
-        $baseUri = GeneralUtility::makeInstance(BaseUriService::class)
-            ->getBaseUri();
+        $baseUri = GeneralUtility::makeInstance(BaseUriService::class)->getBaseUri();
 
-        return (string) (new Uri($file))
-            ->withScheme('https')
-            ->withHost($baseUri->getHost());
+        return (string) (new Uri($file))->withScheme('https')->withHost($baseUri->getHost());
     }
 }
