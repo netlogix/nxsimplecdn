@@ -13,16 +13,9 @@ use Ssch\TYPO3Rector\Configuration\Typo3Option;
 use Ssch\TYPO3Rector\Set\Typo3LevelSetList;
 
 return RectorConfig::configure()
-    ->withPaths([
-        __DIR__ . '/Classes',
-        __DIR__ . '/Configuration',
-        __DIR__ . '/Tests',
-    ])
+    ->withPaths([__DIR__ . '/Classes', __DIR__ . '/Configuration', __DIR__ . '/Tests'])
     ->withPhpSets(true)
-    ->withAttributesSets(
-        doctrine: true,
-        phpunit: true,
-    )
+    ->withAttributesSets(doctrine: true, phpunit: true)
     ->withPreparedSets(
         deadCode: true,
         codeQuality: true,
@@ -30,7 +23,7 @@ return RectorConfig::configure()
         typeDeclarations: true,
         instanceOf: true,
         earlyReturn: true,
-        strictBooleans: true,
+        strictBooleans: true
     )
     ->withImportNames(removeUnusedImports: true)
     ->withSets([
@@ -48,10 +41,7 @@ return RectorConfig::configure()
     ])
     # To have a better analysis from PHPStan, we teach it here some more things
     ->withPHPStanConfigs([Typo3Option::PHPSTAN_FOR_RECTOR_PATH])
-    ->withRules([
-        ConvertImplicitVariablesToExplicitGlobalsRector::class,
-        DeclareStrictTypesRector::class,
-    ])
+    ->withRules([ConvertImplicitVariablesToExplicitGlobalsRector::class, DeclareStrictTypesRector::class])
     # If you use withImportNames(), you should consider excluding some TYPO3 files.
     ->withSkip([
         // @see https://github.com/sabbelasichon/typo3-rector/issues/2536
@@ -61,7 +51,5 @@ return RectorConfig::configure()
         __DIR__ . '/public/*',
         __DIR__ . '/.github/*',
         __DIR__ . '/.Build/*',
-        FirstClassCallableRector::class => [
-            __DIR__ . '/Configuration/Services.php',
-        ],
+        FirstClassCallableRector::class => [__DIR__ . '/Configuration/Services.php'],
     ]);

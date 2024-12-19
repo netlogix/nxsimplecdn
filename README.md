@@ -8,6 +8,7 @@
 # Installation
 
 Via composer :
+
 ```shell script
 composer require netlogix/nxsimplecdn
 ```
@@ -15,13 +16,11 @@ composer require netlogix/nxsimplecdn
 That's all !
 
 # Add cdn domain to your site configuration
+
 ```yaml
 base: 'https://www.example.com/'
 cdnBase: 'https://cdn.example.com/'
-errorHandling:
-  ...
-languages:
-  ...
-settings:
-  ...
+errorHandling: ...
+languages: ...
+settings: ...
 ```

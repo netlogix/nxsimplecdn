@@ -20,7 +20,7 @@ jobs:
       - name: 'Setup PHP'
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version-file: '.phprc'
           tools: composer
 
       - name: 'Get Composer Cache Directory'
@@ -65,19 +65,11 @@ jobs:
         run: composer test:functional
 
       - name: 'Create pull-request'
-        id: cpr
-        uses: peter-evans/create-pull-request@v7.0.3
+        uses: peter-evans/create-pull-request@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "[automated] Apply Coding Standard"
-          base: 'main'
+          commit-message: 'refactor: Apply Coding Standard'
           branch: 'automated-apply-coding-standards'
           title: '[automated] Apply Coding Standard'
           labels: 'automated'
           delete-branch: true
-
-      - name: 'Enable Pull Request Merge when ready'
-        if: steps.cpr.outputs.pull-request-operation == 'created'
-        run: gh pr merge --auto "${{ steps.cpr.outputs.pull-request-number }}"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
