@@ -21,12 +21,19 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 #[AsEventListener]
 readonly class AddCdnToResource
 {
-
     public function __construct(
-        #[Autowire(expression: 'service("Netlogix\\\Nxsimplecdn\\\Service\\\BaseUriService").getBaseUri().getHost()')]
+        #[
+            Autowire(
+                expression: 'service("Netlogix\\\Nxsimplecdn\\\Service\\\BaseUriService").getBaseUri().getHost()'
+            )
+        ]
         protected string $cdnDomainHost,
-        #[Autowire(expression: 'service("TYPO3\\\CMS\\\Core\\\Configuration\\\ExtensionConfiguration").get("nxsimplecdn", "enabled")')]
-        protected bool $enabled = false,
+        #[
+            Autowire(
+                expression: 'service("TYPO3\\\CMS\\\Core\\\Configuration\\\ExtensionConfiguration").get("nxsimplecdn", "enabled")'
+            )
+        ]
+        protected bool $enabled = false
     ) {
     }
 
@@ -54,13 +61,19 @@ readonly class AddCdnToResource
             return;
         }
 
-        if ($resource->getStorage()->getCapabilities()->hasCapability(Capabilities::CAPABILITY_PUBLIC) === false) {
+        if (
+            $resource
+                ->getStorage()
+                ->getCapabilities()
+                ->hasCapability(Capabilities::CAPABILITY_PUBLIC) === false
+        ) {
             return;
         }
 
         if (
             $resource instanceof File &&
-            GeneralUtility::makeInstance(OnlineMediaHelperRegistry::class)->getOnlineMediaHelper($resource) !== false
+            GeneralUtility::makeInstance(OnlineMediaHelperRegistry::class)->getOnlineMediaHelper($resource) !==
+                false
         ) {
             return;
         }
@@ -75,7 +88,8 @@ readonly class AddCdnToResource
             $publicUrl = GeneralUtility::createVersionNumberedFilename($publicUrl);
         }
 
-        return (string) (new Uri($publicUrl))->withScheme('https')
+        return (string) (new Uri($publicUrl))
+            ->withScheme('https')
             ->withHost($this->cdnDomainHost);
     }
 }
