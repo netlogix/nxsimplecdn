@@ -8,6 +8,7 @@
 	},
 	"require-dev": {
 		"ext-sqlite3": "*",
+        "ergebnis/composer-normalize": "^2.45",
 		"ssch/typo3-rector": "^3.0",
 		"typo3/testing-framework": "^9.0",
 		"phpunit/phpcov": "^10.0"
