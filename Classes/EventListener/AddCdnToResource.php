@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Netlogix\Nxsimplecdn\EventListener;
 
-use Netlogix\Nxsimplecdn\Service\BaseUriService;
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use TYPO3\CMS\Core\Attribute\AsEventListener;
 use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\Http\Uri;
+use TYPO3\CMS\Core\Resource\Capabilities;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\Driver\LocalDriver;
 use TYPO3\CMS\Core\Resource\Event\GeneratePublicUrlForResourceEvent;
@@ -15,24 +16,23 @@ use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\OnlineMedia\Helpers\OnlineMediaHelperRegistry;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
 use TYPO3\CMS\Core\Resource\ResourceInterface;
-use TYPO3\CMS\Core\Resource\ResourceStorageInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class AddCdnToResource
+#[AsEventListener]
+readonly class AddCdnToResource
 {
-    protected $configuration = [];
 
-    public function __construct(ExtensionConfiguration $extensionConfiguration = null)
-    {
-        $this->configuration = $extensionConfiguration instanceof ExtensionConfiguration ? $extensionConfiguration->get(
-            'nxsimplecdn'
-        ) :
-            GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('nxsimplecdn');
+    public function __construct(
+        #[Autowire(expression: 'service("Netlogix\\\Nxsimplecdn\\\Service\\\BaseUriService").getBaseUri().getHost()')]
+        protected string $cdnDomainHost,
+        #[Autowire(expression: 'service("TYPO3\\\CMS\\\Core\\\Configuration\\\ExtensionConfiguration").get("nxsimplecdn", "enabled")')]
+        protected bool $enabled = false,
+    ) {
     }
 
     public function __invoke(GeneratePublicUrlForResourceEvent $event): void
     {
-        if (!(bool) $this->configuration['enabled']) {
+        if ($this->enabled === false) {
             return;
         }
 
@@ -54,10 +54,7 @@ class AddCdnToResource
             return;
         }
 
-        if (
-            ($resource->getStorage()->getCapabilities() & ResourceStorageInterface::CAPABILITY_PUBLIC)
-                !== ResourceStorageInterface::CAPABILITY_PUBLIC
-        ) {
+        if ($resource->getStorage()->getCapabilities()->hasCapability(Capabilities::CAPABILITY_PUBLIC) === false) {
             return;
         }
 
@@ -74,12 +71,11 @@ class AddCdnToResource
     private function addCdnPrefixToUrl(ResourceInterface $resourceObject, DriverInterface $driver): string
     {
         $publicUrl = $driver->getPublicUrl($resourceObject->getIdentifier());
-        $cdnBaseUrl = GeneralUtility::makeInstance(BaseUriService::class)->getBaseUri();
         if (!$resourceObject instanceof ProcessedFile) {
             $publicUrl = GeneralUtility::createVersionNumberedFilename($publicUrl);
         }
 
         return (string) (new Uri($publicUrl))->withScheme('https')
-            ->withHost($cdnBaseUrl->getHost());
+            ->withHost($this->cdnDomainHost);
     }
 }
