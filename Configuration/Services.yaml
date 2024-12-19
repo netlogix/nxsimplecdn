@@ -7,45 +7,6 @@ services:
   Netlogix\Nxsimplecdn\:
     resource: '../Classes/*'
 
-  Netlogix\Nxsimplecdn\EventListener\AddCdnToResource:
-    tags:
-      - name: event.listener
-        identifier: 'nxsimplecdn/generatePublicUrlForResourceListener'
-        event: TYPO3\CMS\Core\Resource\Event\GeneratePublicUrlForResourceEvent
-
-  Netlogix\Nxsimplecdn\EventListener\FlushCacheTagForFile:
-    tags:
-      - name: event.listener
-        identifier: 'nxsimplecdn/flushCacheAfterFileContentsSet'
-        method: 'afterFileContentsSet'
-        event: TYPO3\CMS\Core\Resource\Event\AfterFileContentsSetEvent
-
-      - name: event.listener
-        identifier: 'nxsimplecdn/flushCacheAfterFileDeleted'
-        method: 'afterFileDeleted'
-        event: TYPO3\CMS\Core\Resource\Event\AfterFileDeletedEvent
-
-      - name: event.listener
-        identifier: 'nxsimplecdn/flushCacheAfterFileMoved'
-        method: 'afterFileMoved'
-        event: TYPO3\CMS\Core\Resource\Event\AfterFileMovedEvent
-
-      - name: event.listener
-        identifier: 'nxsimplecdn/flushCacheAfterFileRenamed'
-        method: 'afterFileRenamed'
-        event: TYPO3\CMS\Core\Resource\Event\AfterFileRenamedEvent
-
-      - name: event.listener
-        identifier: 'nxsimplecdn/flushCacheAfterFileReplaced'
-        method: 'afterFileReplaced'
-        event: TYPO3\CMS\Core\Resource\Event\AfterFileReplacedEvent
-
-  Netlogix\Nxsimplecdn\EventListener\AddFileCacheTagForTypolink:
-    tags:
-      - name: event.listener
-        identifier: 'nxsimplecdn/addFileCacheTagForTypolink'
-        event: TYPO3\CMS\Frontend\Event\AfterLinkIsGeneratedEvent
-
   Netlogix\Nxsimplecdn\Xclass\PageRenderer:
     arguments:
       $assetsCache: '@cache.assets'

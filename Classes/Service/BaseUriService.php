@@ -10,7 +10,7 @@ use Psr\Http\Message\UriInterface;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Site\Entity\Site;
 
-class BaseUriService
+final class BaseUriService
 {
     public function getBaseUri(): UriInterface
     {
