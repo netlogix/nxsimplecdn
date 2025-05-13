@@ -24,18 +24,15 @@ readonly class AddCdnToResource
     public function __construct(
         #[
             Autowire(
-                expression: 'service("Netlogix\\\Nxsimplecdn\\\Service\\\BaseUriService").getBaseUri().getHost()'
-            )
+                expression: 'service("Netlogix\\\Nxsimplecdn\\\Service\\\BaseUriService").getBaseUri().getHost()',
+            ),
         ]
         protected string $cdnDomainHost,
         #[
-            Autowire(
-                expression: '!!service("extension-configuration").get("nxsimplecdn", "enabled")'
-            )
+            Autowire(expression: '!!service("extension-configuration").get("nxsimplecdn", "enabled")'),
         ]
-        protected bool $enabled = false
-    ) {
-    }
+        protected bool $enabled = false,
+    ) {}
 
     public function __invoke(GeneratePublicUrlForResourceEvent $event): void
     {
@@ -61,12 +58,7 @@ readonly class AddCdnToResource
             return;
         }
 
-        if (
-            $resource
-                ->getStorage()
-                ->getCapabilities()
-                ->hasCapability(Capabilities::CAPABILITY_PUBLIC) === false
-        ) {
+        if ($resource->getStorage()->getCapabilities()->hasCapability(Capabilities::CAPABILITY_PUBLIC) === false) {
             return;
         }
 
@@ -88,8 +80,6 @@ readonly class AddCdnToResource
             $publicUrl = GeneralUtility::createVersionNumberedFilename($publicUrl);
         }
 
-        return (string) (new Uri($publicUrl))
-            ->withScheme('https')
-            ->withHost($this->cdnDomainHost);
+        return (string) (new Uri($publicUrl))->withScheme('https')->withHost($this->cdnDomainHost);
     }
 }
