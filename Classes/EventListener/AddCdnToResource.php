@@ -30,7 +30,7 @@ readonly class AddCdnToResource
         protected string $cdnDomainHost,
         #[
             Autowire(
-                expression: 'service("TYPO3\\\CMS\\\Core\\\Configuration\\\ExtensionConfiguration").get("nxsimplecdn", "enabled")'
+                expression: '!!service("TYPO3\\\CMS\\\Core\\\Configuration\\\ExtensionConfiguration").get("nxsimplecdn", "enabled")'
             )
         ]
         protected bool $enabled = false
