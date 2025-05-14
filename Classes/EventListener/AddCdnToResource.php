@@ -76,6 +76,8 @@ final readonly class AddCdnToResource
             $publicUrl = GeneralUtility::createVersionNumberedFilename($publicUrl);
         }
 
-        return (string) (new Uri($publicUrl))->withScheme('https')->withHost($this->baseUriService->getBaseUri()->getHost());
+        return (string) (new Uri($publicUrl))
+            ->withScheme('https')
+            ->withHost($this->baseUriService->getBaseUri()->getHost());
     }
 }
