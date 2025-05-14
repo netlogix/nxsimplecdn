@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Netlogix\Nxsimplecdn\EventListener;
 
+use Netlogix\Nxsimplecdn\Service\BaseUriService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use TYPO3\CMS\Core\Attribute\AsEventListener;
 use TYPO3\CMS\Core\Http\ApplicationType;
@@ -19,15 +20,10 @@ use TYPO3\CMS\Core\Resource\ResourceInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 #[AsEventListener]
-readonly class AddCdnToResource
+final readonly class AddCdnToResource
 {
     public function __construct(
-        #[
-            Autowire(
-                expression: 'service("Netlogix\\\Nxsimplecdn\\\Service\\\BaseUriService").getBaseUri().getHost()',
-            ),
-        ]
-        protected string $cdnDomainHost,
+        protected BaseUriService $baseUriService,
         #[
             Autowire(expression: '!!service("extension-configuration").get("nxsimplecdn", "enabled")'),
         ]
@@ -80,6 +76,6 @@ readonly class AddCdnToResource
             $publicUrl = GeneralUtility::createVersionNumberedFilename($publicUrl);
         }
 
-        return (string) (new Uri($publicUrl))->withScheme('https')->withHost($this->cdnDomainHost);
+        return (string) (new Uri($publicUrl))->withScheme('https')->withHost($this->baseUriService->getBaseUri()->getHost());
     }
 }
