@@ -18,6 +18,11 @@ class PageRenderer extends \TYPO3\CMS\Core\Page\PageRenderer
             return $file;
         }
 
+        // Do not append cdn host to files with existing host
+        if ((new Uri($file))->getHost() !== '') {
+            return $file;
+        }
+
         $baseUri = GeneralUtility::makeInstance(BaseUriService::class)->getBaseUri();
 
         return (string) (new Uri($file))->withScheme('https')->withHost($baseUri->getHost());
