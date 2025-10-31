@@ -15,22 +15,20 @@ if (getenv('CDN_BASE') === false || getenv('CDN_BASE') === '') {
     return Map::fromEntries();
 }
 
-return Map::fromEntries(
-    [
-        Scope::backend(),
-        new MutationCollection(
-            new Mutation(
-                MutationMode::Extend,
-                Directive::DefaultSrc,
-                SourceScheme::data,
-                new UriValue(sprintf('https://%s', getenv('CDN_BASE')))
-            ),
-            new Mutation(
-                MutationMode::Extend,
-                Directive::ImgSrc,
-                SourceScheme::data,
-                new UriValue(sprintf('https://%s', getenv('CDN_BASE')))
-            ),
+return Map::fromEntries([
+    Scope::backend(),
+    new MutationCollection(
+        new Mutation(
+            MutationMode::Extend,
+            Directive::DefaultSrc,
+            SourceScheme::data,
+            new UriValue(sprintf('https://%s', getenv('CDN_BASE'))),
         ),
-    ]
-);
+        new Mutation(
+            MutationMode::Extend,
+            Directive::ImgSrc,
+            SourceScheme::data,
+            new UriValue(sprintf('https://%s', getenv('CDN_BASE'))),
+        ),
+    ),
+]);
