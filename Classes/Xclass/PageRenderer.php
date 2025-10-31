@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Netlogix\Nxsimplecdn\Xclass;
 
+use Override;
 use Netlogix\Nxsimplecdn\Service\BaseUriService;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class PageRenderer extends \TYPO3\CMS\Core\Page\PageRenderer
 {
+    #[Override]
     protected function getAbsoluteWebPath(string $file): string
     {
         $file = parent::getAbsoluteWebPath($file);
