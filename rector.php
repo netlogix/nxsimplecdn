@@ -3,14 +3,15 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-use Rector\Php81\Rector\Array_\FirstClassCallableRector;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
 use Rector\TypeDeclaration\Rector\StmtsAwareInterface\DeclareStrictTypesRector;
 use Ssch\TYPO3Rector\CodeQuality\General\ConvertImplicitVariablesToExplicitGlobalsRector;
 use Ssch\TYPO3Rector\Configuration\Typo3Option;
+use Rector\PHPUnit\CodeQuality\Rector\Expression\DecorateWillReturnMapWithExpectsMockRector;
 use Ssch\TYPO3Rector\Set\Typo3LevelSetList;
+use Ssch\TYPO3Rector\TYPO314\v0\MigrateGeneralUtilityCreateVersionNumberedFilenameRector;
 
 return RectorConfig::configure()
     ->withPaths([__DIR__ . '/Classes', __DIR__ . '/Configuration', __DIR__ . '/Tests'])
@@ -23,7 +24,6 @@ return RectorConfig::configure()
         typeDeclarations: true,
         instanceOf: true,
         earlyReturn: true,
-        strictBooleans: true,
     )
     ->withImportNames(removeUnusedImports: true)
     ->withSets([
@@ -34,8 +34,8 @@ return RectorConfig::configure()
         SetList::TYPE_DECLARATION,
         SetList::EARLY_RETURN,
         SetList::INSTANCEOF,
-        Typo3LevelSetList::UP_TO_TYPO3_13,
-        PHPUnitSetList::PHPUNIT_100,
+        Typo3LevelSetList::UP_TO_TYPO3_14,
+        PHPUnitSetList::PHPUNIT_110,
         PHPUnitSetList::PHPUNIT_CODE_QUALITY,
         PHPUnitSetList::ANNOTATIONS_TO_ATTRIBUTES,
     ])
@@ -51,5 +51,15 @@ return RectorConfig::configure()
         __DIR__ . '/public/*',
         __DIR__ . '/.github/*',
         __DIR__ . '/.Build/*',
-        FirstClassCallableRector::class => [__DIR__ . '/Configuration/Services.php'],
+        // Rector's mechanical migration assumes an EXT:/PKG:/App resource identifier, but here the
+        // value is already a FAL-driver-resolved public URL - applying it would produce broken CDN URLs.
+        // Safe to defer: the call is only deprecated in v14, removed in v15.
+        MigrateGeneralUtilityCreateVersionNumberedFilenameRector::class => [
+            __DIR__ . '/Classes/EventListener/AddCdnToResource.php',
+        ],
+        // This mock is shared across tests with different expected call counts (some short-circuit
+        // before the "site" attribute is even read) - a fixed exactly(2) expectation breaks half of them.
+        DecorateWillReturnMapWithExpectsMockRector::class => [
+            __DIR__ . '/Tests/Unit/SystemResource/CdnSystemResourcePublisherTest.php',
+        ],
     ]);
