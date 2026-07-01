@@ -50,7 +50,7 @@ final readonly class AddCdnToResource
             return;
         }
 
-        if (!$resource instanceof File && !$resource instanceof ProcessedFile) {
+        if (!($resource instanceof File) && !($resource instanceof ProcessedFile)) {
             return;
         }
 
@@ -72,7 +72,7 @@ final readonly class AddCdnToResource
     private function addCdnPrefixToUrl(ResourceInterface $resourceObject, DriverInterface $driver): string
     {
         $publicUrl = $driver->getPublicUrl($resourceObject->getIdentifier());
-        if (!$resourceObject instanceof ProcessedFile) {
+        if (!($resourceObject instanceof ProcessedFile)) {
             $publicUrl = GeneralUtility::createVersionNumberedFilename($publicUrl);
         }
 
