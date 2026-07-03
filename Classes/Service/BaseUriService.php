@@ -12,9 +12,9 @@ use TYPO3\CMS\Core\Site\Entity\Site;
 
 final class BaseUriService
 {
-    public function getBaseUri(): UriInterface
+    public function getBaseUri(?ServerRequestInterface $request = null): UriInterface
     {
-        $request = $this->getRequest();
+        $request ??= $this->getRequest();
         $site = $request->getAttribute('site');
         assert($site instanceof Site);
 
